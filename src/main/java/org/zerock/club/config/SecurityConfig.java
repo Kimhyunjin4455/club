@@ -11,6 +11,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.zerock.club.security.handler.ClubLoginSuccessHandler;
 
 @Configuration
 @Log4j2
@@ -42,8 +43,13 @@ public class SecurityConfig {
         http.csrf().disable();
         http.logout();
 
-        http.oauth2Login();
+        http.oauth2Login().successHandler(successHandler());
 
         return http.build();
+    }
+
+    @Bean
+    public ClubLoginSuccessHandler successHandler(){
+        return new ClubLoginSuccessHandler(passwordEncoder());
     }
 }
