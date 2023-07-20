@@ -14,6 +14,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.zerock.club.security.filter.ApiCheckFilter;
 import org.zerock.club.security.handler.ClubLoginSuccessHandler;
 import org.zerock.club.security.service.ClubUserDetailsService;
 
@@ -56,6 +58,7 @@ public class SecurityConfig {
         http.rememberMe()
                 .tokenValiditySeconds(60*60*24*7)
                 .userDetailsService(userDetailsService);
+        http.addFilterBefore(apiCheckFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
@@ -63,5 +66,11 @@ public class SecurityConfig {
     @Bean
     public ClubLoginSuccessHandler successHandler(){
         return new ClubLoginSuccessHandler(passwordEncoder());
+    }
+
+    @Bean
+    public ApiCheckFilter apiCheckFilter() {
+
+        return new ApiCheckFilter("/notes/**/*");
     }
 }
