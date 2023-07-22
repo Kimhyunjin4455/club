@@ -6,6 +6,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
+import org.zerock.club.security.dto.ClubAuthMemberDTO;
+import org.zerock.club.security.util.JWTUtil;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -15,9 +17,12 @@ import java.io.IOException;
 
 @Log4j2
 public class ApiLoginFilter extends AbstractAuthenticationProcessingFilter {
-    public ApiLoginFilter(String defaultFilterProcessesUrl) {
+
+    private JWTUtil jwtUtil;
+    public ApiLoginFilter(String defaultFilterProcessesUrl, JWTUtil jwtUtil) {
 
         super(defaultFilterProcessesUrl);
+        this.jwtUtil = jwtUtil;
     }
 
     @Override
@@ -47,21 +52,21 @@ public class ApiLoginFilter extends AbstractAuthenticationProcessingFilter {
 
         log.info(authResult.getPrincipal());
 
-//        //email address
-//        String email = ((ClubAuthMemberDTO)authResult.getPrincipal()).getUsername();
-//
-//        String token = null;
-//        try {
-//            token = jwtUtil.generateToken(email);
-//
-//            response.setContentType("text/plain");
-//            response.getOutputStream().write(token.getBytes());
-//
-//            log.info(token);
-//
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
+        //email address
+        String email = ((ClubAuthMemberDTO)authResult.getPrincipal()).getUsername();
+
+        String token = null;
+        try {
+            token = jwtUtil.generateToken(email);
+
+            response.setContentType("text/plain");
+            response.getOutputStream().write(token.getBytes());
+
+            log.info(token);
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
